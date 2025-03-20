@@ -7,10 +7,9 @@ import {
   Alert,
   Stack,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useGetUserPostsQuery } from "@/api/postsApi";
-import { useEffect } from "react";
 
 import Post from "./Success";
 

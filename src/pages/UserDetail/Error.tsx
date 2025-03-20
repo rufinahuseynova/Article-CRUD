@@ -14,9 +14,7 @@ const ErrorPage = ({ error }: { error: any }) => {
       textAlign="center"
       gap={4}
     >
-      <Icon boxSize={12} color="red.500">
-        <div>test</div>
-      </Icon>
+      <Icon boxSize={12} color="red.500"></Icon>
       <Text fontSize="2xl" fontWeight="bold">
         Oops! Something went wrong.
       </Text>

@@ -38,7 +38,6 @@ export const userApi = baseApi.injectEndpoints({
       invalidatesTags: ["User"],
     }),
   }),
-  overrideExisting: false,
 });
 
 export const {

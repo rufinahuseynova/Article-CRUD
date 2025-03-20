@@ -35,8 +35,8 @@ export const postsApi = baseApi.injectEndpoints({
       invalidatesTags: ["Posts"],
     }),
   }),
-  overrideExisting: false,
 });
+
 export const {
   useGetUserPostsQuery,
   useCreatePostMutation,

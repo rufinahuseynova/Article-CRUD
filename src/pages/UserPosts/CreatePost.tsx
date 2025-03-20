@@ -1,6 +1,6 @@
+import { FC, useState } from "react";
 import { useCreatePostMutation } from "@/api/postsApi";
 import { Box, Button, Flex, Input, Text, Textarea } from "@chakra-ui/react";
-import { FC, useState } from "react";
 import { useParams } from "react-router-dom";
 
 const CreatePost: FC = () => {
