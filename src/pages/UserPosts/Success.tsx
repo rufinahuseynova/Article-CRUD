@@ -53,74 +53,78 @@ const Post: FC<IProps> = ({ posts }) => {
   return (
     <>
       <VStack align="stretch">
-        {posts?.map((post) => (
-          <Box
-            key={post.id}
-            p="4"
-            borderWidth="1px"
-            borderRadius="lg"
-            bg="gray.50"
-            boxShadow="sm"
-          >
-            {editingPost?.id === post.id ? (
-              <>
-                <Input
-                  value={editingPost?.title}
-                  onChange={handleTitle}
-                  placeholder="Title"
-                  size="sm"
-                  mb="2"
-                />
-                <Textarea
-                  value={editingPost?.body}
-                  onChange={handleBody}
-                  placeholder="Body"
-                  size="sm"
-                  mb="2"
-                />
-                <Flex justify="flex-end" gap="2">
-                  <Button
-                    bgColor="blue.500"
+        {posts.length === 0 ? (
+          <Text>There is no posts ....</Text>
+        ) : (
+          posts?.map((post) => (
+            <Box
+              key={post.id}
+              p="4"
+              borderWidth="1px"
+              borderRadius="lg"
+              bg="gray.50"
+              boxShadow="sm"
+            >
+              {editingPost?.id === post.id ? (
+                <>
+                  <Input
+                    value={editingPost?.title}
+                    onChange={handleTitle}
+                    placeholder="Title"
                     size="sm"
-                    onClick={() => handleUpdatePost(post.id)}
-                  >
-                    Save
-                  </Button>
-                  <Button
-                    bgColor="gray.500"
+                    mb="2"
+                  />
+                  <Textarea
+                    value={editingPost?.body}
+                    onChange={handleBody}
+                    placeholder="Body"
                     size="sm"
-                    onClick={() => setEditingPost(undefined)}
-                  >
-                    Cancel
-                  </Button>
-                </Flex>
-              </>
-            ) : (
-              <>
-                <Text>{post.title}</Text>
-                <Text fontSize="sm" color="gray.600">
-                  {post.body}
-                </Text>
-                <Flex justify="flex-end" gap="2" mt="2">
-                  <Button
-                    bgColor="yellow.500"
-                    size="sm"
-                    onClick={() => setEditingPost(post)}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    bgColor="red.500"
-                    size="sm"
-                    onClick={() => handleDeletePost(post.id)}
-                  >
-                    Delete
-                  </Button>
-                </Flex>
-              </>
-            )}
-          </Box>
-        ))}
+                    mb="2"
+                  />
+                  <Flex justify="flex-end" gap="2">
+                    <Button
+                      bgColor="blue.500"
+                      size="sm"
+                      onClick={() => handleUpdatePost(post.id)}
+                    >
+                      Save
+                    </Button>
+                    <Button
+                      bgColor="gray.500"
+                      size="sm"
+                      onClick={() => setEditingPost(undefined)}
+                    >
+                      Cancel
+                    </Button>
+                  </Flex>
+                </>
+              ) : (
+                <>
+                  <Text>{post.title}</Text>
+                  <Text fontSize="sm" color="gray.600">
+                    {post.body}
+                  </Text>
+                  <Flex justify="flex-end" gap="2" mt="2">
+                    <Button
+                      bgColor="yellow.500"
+                      size="sm"
+                      onClick={() => setEditingPost(post)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      bgColor="red.500"
+                      size="sm"
+                      onClick={() => handleDeletePost(post.id)}
+                    >
+                      Delete
+                    </Button>
+                  </Flex>
+                </>
+              )}
+            </Box>
+          ))
+        )}
       </VStack>
       <CreatePost />
     </>

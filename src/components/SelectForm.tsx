@@ -1,8 +1,13 @@
 import { FC } from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { Stack, Select, Field } from "@chakra-ui/react";
+import { Stack, Select, Field, ListCollection } from "@chakra-ui/react";
 
-const SelectForm: FC<{ name: string; items: any }> = ({ name, items }) => {
+interface IProps {
+  name: string;
+  items: ListCollection<{ label: string; value: string }>;
+}
+
+const SelectForm: FC<IProps> = ({ name, items }) => {
   const {
     control,
     formState: { errors },
