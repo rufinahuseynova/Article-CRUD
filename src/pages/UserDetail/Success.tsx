@@ -1,16 +1,20 @@
 import { useUpdateUserMutation, useCreateUserMutation } from "@/api/userApi";
 import FormItem from "@/components/FormElement";
 import SelectForm from "@/components/SelectForm";
+import { yupResolver } from "@hookform/resolvers/yup";
 import {
   Container,
   Box,
   Text,
   Button,
   createListCollection,
+  Spinner,
+  VStack,
 } from "@chakra-ui/react";
 import { FC } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import userSchema from "@/schema/userSchema";
 
 interface IProps {
   user?: any;
@@ -26,7 +30,7 @@ const genders = createListCollection({
 const status = createListCollection({
   items: [
     { label: "active", value: "active" },
-    { label: "passive", value: "passive" },
+    { label: "inactive", value: "inactive" },
   ],
 });
 
@@ -40,6 +44,7 @@ const UserDetail: FC<IProps> = ({ user }) => {
   const methods = useForm({
     mode: "all",
     defaultValues: updatedData,
+    resolver: yupResolver(userSchema),
   });
 
   const handleForm = methods.handleSubmit(async (data) => {
@@ -52,11 +57,21 @@ const UserDetail: FC<IProps> = ({ user }) => {
         await updateUser({ id: user.id, ...data }).unwrap();
         navigate("/");
       }
-    } catch (error) {
-      console.error("Error submitting user data:", error);
+    } catch (error: any) {
+      if (Array.isArray(error.data)) {
+        error.data.forEach((err) => {
+          if (err.field) {
+            methods.setError(err.field, {
+              type: "backend",
+              message: err.message,
+            });
+          }
+        });
+      }
     }
   });
 
+  if (isCreating || isUpdating) return <Spinner />;
 
   return (
     <Container
@@ -69,26 +84,35 @@ const UserDetail: FC<IProps> = ({ user }) => {
     >
       <Box borderWidth="1px" borderRadius="lg" p="4">
         <Text
-          fontSize="2xl"
+          fontSize="3xl"
           fontWeight="bold"
           mb="4"
           textAlign="center"
-          color="teal.600"
+          color="gray.700"
         >
           User Details
         </Text>
         <FormProvider {...methods}>
-          <FormItem name="name" />
-          <FormItem name="email" />
-          <SelectForm name="gender" items={genders} />
-          <SelectForm name="status" items={status} />
+          <VStack gap="16px">
+            <FormItem name="name" />
+            <FormItem name="email" />
+            <SelectForm name="gender" items={genders} />
+            <SelectForm name="status" items={status} />
+          </VStack>
         </FormProvider>
-        <Button onClick={handleForm}>
+        <Button onClick={handleForm} mt="16px" variant="solid" bg="blue.600">
           {user === undefined ? "Create user" : "Update user"}
         </Button>
       </Box>
 
-      <Button onClick={() => navigate(-1)}>Back</Button>
+      <Button
+        onClick={() => navigate(-1)}
+        mt="16px"
+        bg="bg.subtle"
+        variant="outline"
+      >
+        Back
+      </Button>
     </Container>
   );
 };

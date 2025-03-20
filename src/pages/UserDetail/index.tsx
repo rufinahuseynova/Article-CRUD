@@ -1,17 +1,16 @@
 import { useParams } from "react-router-dom";
 
-import { Text, Spinner } from "@chakra-ui/react";
 import UserDetail from "./Success.tsx";
 import { useGetUserByIdQuery } from "@/api/userApi.tsx";
+import ErrorPage from "./Error.tsx";
+import Loading from "./Loading.tsx";
 
 const UserDetailPage = () => {
-  console.log("mount");
-
   const { id } = useParams();
   const { data: user, isLoading, error } = useGetUserByIdQuery(id);
 
-  if (isLoading) return <Spinner />;
-  if (error) return <Text>Error loading user details</Text>;
+  if (isLoading) return <Loading />;
+  if (error) return <ErrorPage error={error} />;
 
   return <UserDetail user={user} />;
 };

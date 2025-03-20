@@ -16,9 +16,12 @@ export const userApi = createApi({
   tagTypes: ["User"],
   endpoints: (builder) => ({
     getUsers: builder.query({
-      query: ({ page = 1, perPage = 20 }) => ({
-        url: `users?page=${page}&per_page=${perPage}`,
-      }),
+      query: ({ page = 1, perPage = 20, gender, status }) => {
+        let url = `users?page=${page}&per_page=${perPage}`;
+        if (gender) url += `&gender=${gender}`;
+        if (status) url += `&status=${status}`;
+        return { url };
+      },
       providesTags: ["User"],
     }),
     getUserById: builder.query({

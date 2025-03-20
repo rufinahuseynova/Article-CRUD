@@ -1,89 +1,76 @@
-import { FC, useState } from "react";
-import { useGetUsersQuery, useDeleteUserMutation } from "../api/userApi.tsx";
+import { useNavigate } from "react-router-dom";
+
 import {
   Button,
   Container,
-  HStack,
-  Spinner,
-  Table,
-  Stack,
   Flex,
+  HStack,
+  Stack,
+  Table,
 } from "@chakra-ui/react";
 
-import { useNavigate } from "react-router-dom";
-import { toaster } from "./ui/toaster.tsx";
+import { useDeleteUserMutation } from "@/api/userApi";
 
-const UserTable: FC = () => {
-  // const toaster = useToast();
-  const navigate = useNavigate(); //rg
-  const [page, setPage] = useState(1);
-  const perPage = 20;
-  const {
-    data: users,
-    isLoading,
-    error,
-  } = useGetUsersQuery({
-    page,
-    perPage,
-  });
-  const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation();
+import Filter from "../UserFilter";
+import { useState } from "react";
 
-  if (isLoading)
-    return (
-      <Spinner
-        size="xl"
-        color="teal.500"
-        position="absolute"
-        top="50%"
-        left="50%"
-        transform="translate(-50%, -50%)"
-      />
-    );
-  if (error) return <p>Error loading data...</p>;
+const UserTable = ({
+  users,
+  page,
+  setPage,
+  status,
+  setStatus,
+  gender,
+  setGender,
+}) => {
+  const navigate = useNavigate();
+  const [loadingId, setLoadingId] = useState<number | null>(null);
+  const [deleteUser] = useDeleteUserMutation();
 
   const handleUser = (id: number) => {
     navigate(`/user/${id}`);
   };
 
   const handleNavigate = () => navigate("/user/create");
-  // rfn
-  const handleViewPosts = (id: number) => {
+
+  const handleDelete = async (
+    e: React.MouseEvent<HTMLButtonElement>,
+    id: number
+  ) => {
+    e.stopPropagation();
+    setLoadingId(id);
+    try {
+      await deleteUser(id).unwrap();
+    } catch (err) {}
+  };
+
+  const handleViewPosts = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    id: number
+  ) => {
+    e.stopPropagation();
     navigate(`/user/${id}/posts`);
   };
-  const handleDelete = async (e: any, id: number) => {
-    e.stopPropagation();
-    console.log("here");
 
-    try {
-      console.log("Deleting user...");
-      const response = await deleteUser(id).unwrap();
-      console.log(response);
-      toaster.success({
-        title: "User deleted",
-        description: `User ID ${id} has been removed.`,
-      });
-    } catch (err) {
-      toaster.create({
-        title: "Error",
-        description: "Failed to delete user.",
-        type: "error",
-      });
-    }
-  };
-  // frn over
   return (
     <Container mt="2">
-      <Stack wrap="wrap" gap="3">
-        <Flex justify="flex-end">
+      <Stack gap="3">
+        <Flex justify="space-between" align={"center"}>
           <Button
             size="sm"
-            bgColor="teal.600"
+            bgColor="blue.500"
             mt="3"
             width="150px"
             onClick={handleNavigate}
           >
             Create new user+
           </Button>
+          <Filter
+            gender={gender}
+            setGender={setGender}
+            status={status}
+            setStatus={setStatus}
+          />
         </Flex>
       </Stack>
       <Table.Root mt={35} variant="line" border="1px solid gray">
@@ -99,10 +86,11 @@ const UserTable: FC = () => {
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {users?.map((user: any) => (
+          {users.map((user: any) => (
             <Table.Row
               key={user.id}
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 handleUser(user.id);
               }}
               cursor="pointer"
@@ -114,26 +102,19 @@ const UserTable: FC = () => {
               <Table.Cell border="1px solid gray">
                 <Button
                   size="xs"
-                  onClick={(e) => {
-                    handleDelete(e, user.id);
-                    toaster.create({
-                      description: "File saved successfully",
-                      type: "info",
-                    });
-                  }}
-                  loading={isDeleting}
+                  onClick={(e) => handleDelete(e, user.id)}
+                  loading={loadingId === user.id}
                   bgColor="red"
+                  margin="5px"
                 >
                   Delete
                 </Button>
                 <Button
                   size="xs"
-                  bgColor="blue.400"
+                  margin="5px"
+                  bgColor="blue.600"
                   color="white"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleViewPosts(user.id);
-                  }}
+                  onClick={(e) => handleViewPosts(e, user.id)}
                 >
                   View Posts
                 </Button>
